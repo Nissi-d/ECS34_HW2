@@ -10,10 +10,11 @@ TESTDIR = testsrc
 INCLUDEDIR = include
 
 # Source files
-SRCS = $(wildcard $(SRCDIR)/*.cpp) $(wildcard $(TESTDIR)/*Test.cpp)
+SRCS = $(wildcard $(SRCDIR)/*.cpp)
 
+TESTS = $(wildcard $(TESTDIR)/*Test.cpp)
 # Object files (automatically generated from source files)
-OBJS = $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+OBJS = $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o) $(TESTS:$(TESTDIR)/%.cpp=$(OBJDIR)/%.o)
 
 # Test executables
 TARGETS = $(BINDIR)/teststrutils $(BINDIR)/teststrdatasource $(BINDIR)/teststrdatasink $(BINDIR)/testdsv $(BINDIR)/testxml
