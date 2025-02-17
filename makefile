@@ -1,54 +1,51 @@
-# Compiler and flags
+# Compiler&flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -g
+CXXFLAGS = -std=c++17 -Wall -Wextra
 
-# Directories
+# Directories for object files and binaries
 OBJDIR = obj
 BINDIR = bin
 
-# Source files and executables
-SRC = $(wildcard *.cpp)
-OBJ = $(SRC:%.cpp=$(OBJDIR)/%.o)
+# Source files
+SRCS = StringUtils.cpp StringUtilsTest.cpp \
+		StringDataSource.cpp StringDataSourceTest.cpp \
+		StringDataSink.cpp StringDataSinkTest.cpp \
+		DSVReader.cpp DSVWriter.cpp DSVTest.cpp \
+    	XMLReader.cpp XMLWriter.cpp XMLTest.cpp
 
-TESTS = teststrutils teststrdatasource teststrdatasink testdsv testxml
+# Object files (automatically generated from source files)
+OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 
-# Create obj and bin directories if they don't exist
-$(OBJDIR) $(BINDIR):
-	mkdir -p $@
+# Test executables
+TARGETS = $(BINDIR)/teststrutils $(BINDIR)/teststrdatasource $(BINDIR)/teststrdatasink 
 
-# Default target to compile everything
-all: $(BINDIR)/$(TESTS)
+# create directories if nonexistent
+$(OBJDIR):
+	mkdir -p $(OBJDIR)
 
-# Rule to link the object files and create executables
-$(BINDIR)/teststrutils: $(OBJDIR)/StringUtils.o $(OBJDIR)/StringUtilsTest.o
-	$(CXX) $(CXXFLAGS) $^ -o $@
+$(BINDIR):
+	mkdir -p $(BINDIR)
 
-$(BINDIR)/teststrdatasource: $(OBJDIR)/StringDataSource.o $(OBJDIR)/StringDataSourceTest.o
-	$(CXX) $(CXXFLAGS) $^ -o $@
-
-$(BINDIR)/teststrdatasink: $(OBJDIR)/StringDataSink.o $(OBJDIR)/StringDataSinkTest.o
-	$(CXX) $(CXXFLAGS) $^ -o $@
-
-$(BINDIR)/testdsv: $(OBJDIR)/DSVReaderWriter.o $(OBJDIR)/DSVTests.o
-	$(CXX) $(CXXFLAGS) $^ -o $@
-
-$(BINDIR)/testxml: $(OBJDIR)/XMLReaderWriter.o $(OBJDIR)/XMLTests.o
-	$(CXX) $(CXXFLAGS) $^ -o $@
-
-# Rule to compile .cpp files to object files
+# build object files
 $(OBJDIR)/%.o: %.cpp | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Execute the tests after building
-run: all
-	$(BINDIR)/teststrutils
-	$(BINDIR)/teststrdatasource
-	$(BINDIR)/teststrdatasink
-	$(BINDIR)/testdsv
-	$(BINDIR)/testxml
+# link executables
+$(BINDIR)/teststrutils: $(OBJDIR)/StringUtils.o $(OBJDIR)/StringUtilsTest.o | $(BINDIR)
+	$(CXX) $^ -lgtest -lgtest_main -o $@
 
-# Clean up the object and binary directories
+$(BINDIR)/teststrdatasource: $(OBJDIR)/StringDataSource.o $(OBJDIR)/StringDataSourceTest.o | $(BINDIR)
+	$(CXX) $^ -lgtest -lgtest_main -o $@
+
+$(BINDIR)/teststrdatasink: $(OBJDIR)/StringDataSink.o $(OBJDIR)/StringDataSinkTest.o | $(BINDIR)
+	$(CXX) $^ -lgtest -lgtest_main -o $@
+
+# run
+test: $(TARGETS)
+	@for target in $(TARGETS); do \
+		./$$target || exit 1; \
+	done
+
+# remove obj and bin directories
 clean:
 	rm -rf $(OBJDIR) $(BINDIR)
-
-.PHONY: all run clean
