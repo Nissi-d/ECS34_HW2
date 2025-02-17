@@ -6,7 +6,7 @@ CXXFLAGS = -std=c++17 -Wall -Wextra -I./include
 OBJDIR = obj
 BINDIR = bin
 SRCDIR = src
-TESTDIR = test
+TESTDIR = testsrc
 INCLUDEDIR = include
 
 # Source files
