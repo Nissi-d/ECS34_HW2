@@ -16,7 +16,7 @@ SRCS = $(wildcard $(SRCDIR)/*.cpp) $(wildcard $(TESTDIR)/*Test.cpp)
 OBJS = $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
 # Test executables
-TARGETS = $(BINDIR)/teststrutils $(BINDIR)/teststrdatasource $(BINDIR)/teststrdatasink 
+TARGETS = $(BINDIR)/teststrutils $(BINDIR)/teststrdatasource $(BINDIR)/teststrdatasink $(BINDIR)/testdsv $(BINDIR)/testxml
 
 all: $(TARGETS)
 
@@ -41,6 +41,11 @@ $(BINDIR)/teststrdatasource: $(OBJDIR)/StringDataSource.o $(OBJDIR)/StringDataSo
 $(BINDIR)/teststrdatasink: $(OBJDIR)/StringDataSink.o $(OBJDIR)/StringDataSinkTest.o | $(BINDIR)
 	$(CXX) $^ -lgtest -lgtest_main -o $@
 
+$(BINDIR)/testdsv: $(OBJDIR)/DSVReader.o $(OBJDIR)/DSVWriter.o $(OBJDIR)/DSVTest.o $(OBJDIR)/StringDataSource.o $(OBJDIR)/StringDataSink.o | $(BINDIR)
+	$(CXX) $^ -lgtest -lgtest_main -o $@
+
+$(BINDIR)/testxml: $(OBJDIR)/XMLReader.o $(OBJDIR)/XMLWriter.o $(OBJDIR)/XMLTest.o $(OBJDIR)/StringDataSource.o | $(BINDIR)
+	$(CXX) $^ -lgtest -lgtest_main -lexpat -o $@
 # run
 test: $(TARGETS)
 	@for target in $(TARGETS); do \
