@@ -32,6 +32,9 @@ $(BINDIR):
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+$(OBJDIR)/%.o: $(TESTDIR)/%.cpp | $(OBJDIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 # link executables
 $(BINDIR)/teststrutils: $(OBJDIR)/StringUtils.o $(OBJDIR)/StringUtilsTest.o | $(BINDIR)
 	$(CXX) $^ -lgtest -lgtest_main -o $@
