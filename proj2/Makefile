@@ -1,23 +1,24 @@
 # Compiler&flags
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra
+CXXFLAGS = -std=c++17 -Wall -Wextra -I./include
 
 # Directories for object files and binaries
 OBJDIR = obj
 BINDIR = bin
+SRCDIR = src
+TESTDIR = test
+INCLUDEDIR = include
 
 # Source files
-SRCS = StringUtils.cpp StringUtilsTest.cpp \
-		StringDataSource.cpp StringDataSourceTest.cpp \
-		StringDataSink.cpp StringDataSinkTest.cpp \
-		DSVReader.cpp DSVWriter.cpp DSVTest.cpp \
-    	XMLReader.cpp XMLWriter.cpp XMLTest.cpp
+SRCS = $(wildcard $(SRCDIR)/*.cpp) $(wildcard $(TESTDIR)/*Test.cpp)
 
 # Object files (automatically generated from source files)
-OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
+OBJS = $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
 # Test executables
 TARGETS = $(BINDIR)/teststrutils $(BINDIR)/teststrdatasource $(BINDIR)/teststrdatasink 
+
+all: $(TARGETS)
 
 # create directories if nonexistent
 $(OBJDIR):
@@ -27,7 +28,7 @@ $(BINDIR):
 	mkdir -p $(BINDIR)
 
 # build object files
-$(OBJDIR)/%.o: %.cpp | $(OBJDIR)
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp | $(OBJDIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # link executables
@@ -49,3 +50,5 @@ test: $(TARGETS)
 # remove obj and bin directories
 clean:
 	rm -rf $(OBJDIR) $(BINDIR)
+	
+.PHONY: all test clean
